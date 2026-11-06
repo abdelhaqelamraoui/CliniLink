@@ -35,7 +35,7 @@ After changing `rabbitmq.conf` or `definitions.json`, rebuild the image (`--buil
 | Event | Publisher | Routing key |
 |---|---|---|
 | AppointmentEvent | appointment-service | `appointment.<type>`: `booked`, `rescheduled`, `cancelled`, `checked_in`, `completed`, `auto_cancelled_late`, `cancelled_doctor_absent` |
-| DoctorAbsenceRecorded | doctor-availability-service | `doctor.absence.recorded` |
+| DoctorAbsenceRecorded | doctor-availability-service | `doctor.absence_recorded` |
 | DoctorRated | feedback-service | `doctor.rated` |
 | User events (to be defined) | user-auth-service | `user.<type>` (no consumer yet) |
 
@@ -43,9 +43,9 @@ After changing `rabbitmq.conf` or `definitions.json`, rebuild the image (`--buil
 
 | Queue | Consumer | Binding |
 |---|---|---|
-| `appointment-service.doctor-absence` | appointment-service | `doctor.absence.recorded` |
+| `appointment-service.doctor-absence` | appointment-service | `doctor.absence_recorded` |
 | `notification-service.appointment-events` | notification-service | `appointment.*` |
-| `notification-service.doctor-absence` | notification-service | `doctor.absence.recorded` |
+| `notification-service.doctor-absence` | notification-service | `doctor.absence_recorded` |
 | `queue-resource-service.appointment-events` | queue-resource-service | `appointment.*` |
 | `doctor-availability-service.doctor-rated` | doctor-availability-service | `doctor.rated` |
 
@@ -57,26 +57,30 @@ stopped consumer does not affect the others. Messages wait in the queue until th
 - **Durable:** all queues are quorum queues (replicated, stored on disk). Publishers send
   persistent messages (`delivery_mode = 2`) and should use publisher confirms.
 - **Retries and dead-letter queue:** a consumer acks a message only after processing it. A failed
-  message is nacked and requeued. After 5 failed deliveries (`x-delivery-limit`) it moves through
+  message is nacked and requeued. After 3 failed deliveries (`x-delivery-limit`) it moves through
   `clinilink.dlx` to `<queue>.dlq`, where it can be inspected and replayed from the management UI.
-- **Idempotency:** a message can be delivered more than once, so every event carries an `eventId`
+- **Idempotency:** a message can be delivered more than once, so every event carries an `event_id`
   and consumers ignore IDs they have already processed.
 
 ## Message format
 
-JSON body, with `content_type = application/json`:
+JSON body, with `content_type = application/json`, using the common envelope from the report (section 6.5):
 
 ```json
 {
-  "eventId": "6f1c2a3e-...",
-  "type": "appointment.booked",
-  "occurredAt": "2026-11-06T09:30:00Z",
-  "version": 1,
-  "data": { "appointmentId": "...", "patientId": "...", "doctorId": "...", "start": "..." }
+  "event_id": "e3b0c442-98fc-4c14-9afb-f4c8996fb924",
+  "event_type": "AppointmentBooked",
+  "event_version": 1,
+  "aggregate_id": "a1b2c3d4-e5f6-4890-a234-56789abcdef0",
+  "aggregate_version": 1,
+  "occurred_at": "2026-11-04T22:30:00.100Z",
+  "correlation_id": "6c1f2e8a-9b0d-4e7a-a3f1-2d5c8b9e0f14",
+  "producer": "appointment-service",
+  "payload": { "patient_id": "...", "doctor_id": "...", "appointment_date": "2026-11-10", "start_time": "10:00", "end_time": "10:30" }
 }
 ```
 
-The `data` fields of each event are defined in `shared/`.
+The `payload` fields of each event are defined in `shared/`.
 
 ## Adding a consumer
 

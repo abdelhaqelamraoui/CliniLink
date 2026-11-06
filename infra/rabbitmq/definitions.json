@@ -47,7 +47,7 @@
       "auto_delete": false,
       "arguments": {
         "x-queue-type": "quorum",
-        "x-delivery-limit": 5,
+        "x-delivery-limit": 3,
         "x-dead-letter-exchange": "clinilink.dlx",
         "x-dead-letter-routing-key": "appointment-service.doctor-absence"
       }
@@ -59,7 +59,7 @@
       "auto_delete": false,
       "arguments": {
         "x-queue-type": "quorum",
-        "x-delivery-limit": 5,
+        "x-delivery-limit": 3,
         "x-dead-letter-exchange": "clinilink.dlx",
         "x-dead-letter-routing-key": "notification-service.appointment-events"
       }
@@ -71,7 +71,7 @@
       "auto_delete": false,
       "arguments": {
         "x-queue-type": "quorum",
-        "x-delivery-limit": 5,
+        "x-delivery-limit": 3,
         "x-dead-letter-exchange": "clinilink.dlx",
         "x-dead-letter-routing-key": "notification-service.doctor-absence"
       }
@@ -83,7 +83,7 @@
       "auto_delete": false,
       "arguments": {
         "x-queue-type": "quorum",
-        "x-delivery-limit": 5,
+        "x-delivery-limit": 3,
         "x-dead-letter-exchange": "clinilink.dlx",
         "x-dead-letter-routing-key": "queue-resource-service.appointment-events"
       }
@@ -95,7 +95,7 @@
       "auto_delete": false,
       "arguments": {
         "x-queue-type": "quorum",
-        "x-delivery-limit": 5,
+        "x-delivery-limit": 3,
         "x-dead-letter-exchange": "clinilink.dlx",
         "x-dead-letter-routing-key": "doctor-availability-service.doctor-rated"
       }
@@ -142,7 +142,7 @@
       "vhost": "clinilink",
       "destination": "appointment-service.doctor-absence",
       "destination_type": "queue",
-      "routing_key": "doctor.absence.recorded",
+      "routing_key": "doctor.absence_recorded",
       "arguments": {}
     },
     {
@@ -158,7 +158,7 @@
       "vhost": "clinilink",
       "destination": "notification-service.doctor-absence",
       "destination_type": "queue",
-      "routing_key": "doctor.absence.recorded",
+      "routing_key": "doctor.absence_recorded",
       "arguments": {}
     },
     {
