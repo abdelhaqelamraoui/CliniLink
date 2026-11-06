@@ -1,0 +1,26 @@
+# Runs the test suite in Docker against a throwaway PostgreSQL:
+#   docker compose -f compose.test.yaml up --build --abort-on-container-exit --exit-code-from tests
+#   docker compose -f compose.test.yaml down -v
+
+services:
+  test-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: queue_test
+      POSTGRES_USER: queue
+      POSTGRES_PASSWORD: queue
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U queue -d queue_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  tests:
+    build:
+      context: .
+      target: test
+    environment:
+      DATABASE_URL: postgresql+asyncpg://queue:queue@test-db:5432/queue_test
+    depends_on:
+      test-db:
+        condition: service_healthy
