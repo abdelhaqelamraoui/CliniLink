@@ -1,0 +1,221 @@
+{
+  "users": [
+    {
+      "name": "clinilink",
+      "password_hash": "bZrEgng6vxzD0N98EnvPTl4fYv/wKog3jutUOrgCWaVTD1+x",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ["administrator"]
+    }
+  ],
+  "vhosts": [
+    { "name": "clinilink" }
+  ],
+  "permissions": [
+    {
+      "user": "clinilink",
+      "vhost": "clinilink",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "clinilink.events",
+      "vhost": "clinilink",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "clinilink.dlx",
+      "vhost": "clinilink",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "appointment-service.doctor-absence",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 5,
+        "x-dead-letter-exchange": "clinilink.dlx",
+        "x-dead-letter-routing-key": "appointment-service.doctor-absence"
+      }
+    },
+    {
+      "name": "notification-service.appointment-events",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 5,
+        "x-dead-letter-exchange": "clinilink.dlx",
+        "x-dead-letter-routing-key": "notification-service.appointment-events"
+      }
+    },
+    {
+      "name": "notification-service.doctor-absence",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 5,
+        "x-dead-letter-exchange": "clinilink.dlx",
+        "x-dead-letter-routing-key": "notification-service.doctor-absence"
+      }
+    },
+    {
+      "name": "queue-resource-service.appointment-events",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 5,
+        "x-dead-letter-exchange": "clinilink.dlx",
+        "x-dead-letter-routing-key": "queue-resource-service.appointment-events"
+      }
+    },
+    {
+      "name": "doctor-availability-service.doctor-rated",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "quorum",
+        "x-delivery-limit": 5,
+        "x-dead-letter-exchange": "clinilink.dlx",
+        "x-dead-letter-routing-key": "doctor-availability-service.doctor-rated"
+      }
+    },
+    {
+      "name": "appointment-service.doctor-absence.dlq",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum" }
+    },
+    {
+      "name": "notification-service.appointment-events.dlq",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum" }
+    },
+    {
+      "name": "notification-service.doctor-absence.dlq",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum" }
+    },
+    {
+      "name": "queue-resource-service.appointment-events.dlq",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum" }
+    },
+    {
+      "name": "doctor-availability-service.doctor-rated.dlq",
+      "vhost": "clinilink",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum" }
+    }
+  ],
+  "bindings": [
+    {
+      "source": "clinilink.events",
+      "vhost": "clinilink",
+      "destination": "appointment-service.doctor-absence",
+      "destination_type": "queue",
+      "routing_key": "doctor.absence.recorded",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.events",
+      "vhost": "clinilink",
+      "destination": "notification-service.appointment-events",
+      "destination_type": "queue",
+      "routing_key": "appointment.*",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.events",
+      "vhost": "clinilink",
+      "destination": "notification-service.doctor-absence",
+      "destination_type": "queue",
+      "routing_key": "doctor.absence.recorded",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.events",
+      "vhost": "clinilink",
+      "destination": "queue-resource-service.appointment-events",
+      "destination_type": "queue",
+      "routing_key": "appointment.*",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.events",
+      "vhost": "clinilink",
+      "destination": "doctor-availability-service.doctor-rated",
+      "destination_type": "queue",
+      "routing_key": "doctor.rated",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.dlx",
+      "vhost": "clinilink",
+      "destination": "appointment-service.doctor-absence.dlq",
+      "destination_type": "queue",
+      "routing_key": "appointment-service.doctor-absence",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.dlx",
+      "vhost": "clinilink",
+      "destination": "notification-service.appointment-events.dlq",
+      "destination_type": "queue",
+      "routing_key": "notification-service.appointment-events",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.dlx",
+      "vhost": "clinilink",
+      "destination": "notification-service.doctor-absence.dlq",
+      "destination_type": "queue",
+      "routing_key": "notification-service.doctor-absence",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.dlx",
+      "vhost": "clinilink",
+      "destination": "queue-resource-service.appointment-events.dlq",
+      "destination_type": "queue",
+      "routing_key": "queue-resource-service.appointment-events",
+      "arguments": {}
+    },
+    {
+      "source": "clinilink.dlx",
+      "vhost": "clinilink",
+      "destination": "doctor-availability-service.doctor-rated.dlq",
+      "destination_type": "queue",
+      "routing_key": "doctor-availability-service.doctor-rated",
+      "arguments": {}
+    }
+  ]
+}
