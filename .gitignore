@@ -1,0 +1,35 @@
+# Node.js / Next.js
+**/node_modules/
+**/.next/
+**/out/
+**/dist/
+**/.env
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+**/.Python
+**/venv/
+**/env/
+**/.venv/
+**/ENV/
+**/pip-wheel-metadata/
+**/build/
+**/develop-eggs/
+**/dist/
+**/*.egg-info/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.tox/
+**/.coverage
+**/htmlcov/
+
+# IDE
+**/.idea/
+**/.vscode/
+
+# OS
+**/.DS_Store
+**/Thumbs.db

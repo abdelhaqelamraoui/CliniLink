@@ -1,0 +1,46 @@
+services:
+  # Production build: docker compose up --build frontend-prod
+  frontend-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: clinilink-frontend:prod
+    container_name: clinilink-frontend-prod
+    ports:
+      - "3000:3000"
+    profiles:
+      - prod
+
+  # Development with live sync: docker compose watch frontend-dev
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: clinilink-frontend:dev
+    container_name: clinilink-frontend-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - WATCHPACK_POLLING=true
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: package-lock.json
+
+  # Lint: docker compose --profile tools run --rm frontend-lint
+  frontend-lint:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: clinilink-frontend:dev
+    command: ["npm", "run", "lint"]
+    profiles:
+      - tools

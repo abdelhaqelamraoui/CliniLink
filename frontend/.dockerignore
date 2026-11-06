@@ -1,0 +1,53 @@
+# Dependencies (installed inside the image)
+node_modules/
+.pnp/
+.pnp.js
+
+# Next.js build output
+.next/
+out/
+build/
+.vercel/
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+
+# Environment files (never bake secrets into the build context)
+.env*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Git
+.git/
+.gitignore
+
+# Docker files
+Dockerfile*
+.dockerignore
+compose*.yaml
+docker-compose*.yml
+
+# Docs
+*.md
+
+# Build metadata / caches
+*.tsbuildinfo
+.cache/
+.eslintcache
+.turbo/
+
+# OS files
+.DS_Store
+*.pem
