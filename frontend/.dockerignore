@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # Dependencies (installed inside the image)
 node_modules/
 .pnp/
@@ -51,3 +52,15 @@ docker-compose*.yml
 # OS files
 .DS_Store
 *.pem
+=======
+node_modules
+.next
+.git
+Dockerfile
+.dockerignore
+*.md
+.env*
+npm-debug.log*
+Dockerfile.dev
+compose.yaml
+>>>>>>> Stashed changes

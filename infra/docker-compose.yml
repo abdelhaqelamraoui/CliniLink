@@ -1,0 +1,83 @@
+# CliniLink local environment.
+# Start with (from the CliniLink folder): docker compose -f infra/docker-compose.yml up -d --build
+# Dev-only credentials below; use secrets in any real deployment.
+
+services:
+  # ---------- infrastructure ----------
+  rabbitmq:
+    build: ./rabbitmq
+    image: clinilink/rabbitmq:1.0
+    container_name: clinilink-rabbitmq
+    hostname: rabbitmq   # RabbitMQ stores data per node name, so keep the hostname fixed
+    ports:
+      - "5672:5672"     # AMQP (services)
+      - "15672:15672"   # management UI: http://localhost:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: clinilink-redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # ---------- Frontend ----------
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    image: clinilink/frontend:0.1
+    container_name: clinilink-frontend
+    ports:
+      - "3000:3000"     # http://localhost:3000
+    restart: unless-stopped
+
+  # ---------- MS4: Queue & Resource Management ----------
+  queue-db:
+    image: postgres:16-alpine
+    container_name: clinilink-queue-db
+    environment:
+      POSTGRES_DB: queue_db
+      POSTGRES_USER: queue
+      POSTGRES_PASSWORD: queue
+    volumes:
+      - queue-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U queue -d queue_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  queue-resource-service:
+    build: ../queue-resource-service
+    image: clinilink/queue-resource-service:1.0
+    container_name: clinilink-queue-resource-service
+    environment:
+      DATABASE_URL: postgresql+asyncpg://queue:queue@queue-db:5432/queue_db
+      RABBITMQ_URL: amqp://clinilink:clinilink@rabbitmq:5672/clinilink
+      REDIS_URL: redis://redis:6379/0
+      TIMEZONE: Europe/Paris
+      # Until Keycloak is in this file: accept unsigned dev tokens.
+      # Then replace with AUTH_JWKS_URL: http://keycloak:8080/realms/clinilink/protocol/openid-connect/certs
+      AUTH_ALLOW_UNVERIFIED: "true"
+    ports:
+      - "8004:8000"     # http://localhost:8004/api/v1/queues/docs
+    depends_on:
+      queue-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  rabbitmq-data:
+  queue-db-data:

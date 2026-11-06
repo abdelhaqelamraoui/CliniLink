@@ -1,12 +1,22 @@
 {
+<<<<<<< Updated upstream
   "name": "frontend",
+=======
+  "name": "clinilink-frontend",
+>>>>>>> Stashed changes
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+<<<<<<< Updated upstream
     "lint": "eslint"
+=======
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "icons": "node scripts/generate-icons.mjs"
+>>>>>>> Stashed changes
   },
   "dependencies": {
     "next": "16.4.5",
@@ -20,6 +30,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
+<<<<<<< Updated upstream
+=======
+    "sharp": "^0.34.0",
+>>>>>>> Stashed changes
     "tailwindcss": "^4",
     "typescript": "^5"
   }
